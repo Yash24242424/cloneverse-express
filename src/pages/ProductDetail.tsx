@@ -12,7 +12,7 @@ const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -56,7 +56,7 @@ const ProductDetail = () => {
   }
   
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addItem(product, quantity);
     toast({
       title: 'Added to cart',
       description: `${quantity} ${quantity > 1 ? 'items' : 'item'} added to your cart.`,

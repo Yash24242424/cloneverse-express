@@ -24,7 +24,7 @@ type CartContextType = {
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  addToCart: (product: any, quantity?: number) => void;
+  addToCart: (product: { id: string; name: string; price: number; image: string; brand?: string; salePrice?: number }, quantity?: number) => void;
   removeFromCart: (id: string) => void;
 };
 
