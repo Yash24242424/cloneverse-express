@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Search, ShoppingCart, Menu, X, Heart, User } from "lucide-react";
+import { Search, ShoppingCart, Menu, X, Heart, User, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { categories } from "@/data/categories";
@@ -80,9 +80,15 @@ const Header = () => {
                 <User size={20} />
               </button>
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 hidden group-hover:block">
-                <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                <div className="px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-100">
                   {user.name}
                 </div>
+                <Link to="/profile" className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  My Profile
+                </Link>
+                <Link to="/orders" className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  My Orders
+                </Link>
                 <button
                   onClick={logout}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -92,12 +98,22 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            <Link
-              to="/login"
-              className="hidden sm:block p-2 text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              <User size={20} />
-            </Link>
+            <div className="hidden sm:flex items-center space-x-2">
+              <Link
+                to="/login"
+                className="p-2 text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+              >
+                <LogIn size={20} className="mr-1" />
+                <span className="text-sm">Login</span>
+              </Link>
+              <Link
+                to="/signup"
+                className="p-2 text-gray-600 hover:text-blue-600 transition-colors flex items-center"
+              >
+                <UserPlus size={20} className="mr-1" />
+                <span className="text-sm">Sign Up</span>
+              </Link>
+            </div>
           )}
           
           <Link 
@@ -189,6 +205,20 @@ const Header = () => {
                 <span className="text-lg font-medium text-gray-800">
                   {user.name}
                 </span>
+                <Link 
+                  to="/profile"
+                  className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Profile
+                </Link>
+                <Link 
+                  to="/orders"
+                  className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Orders
+                </Link>
                 <button
                   onClick={() => {
                     logout();
@@ -200,13 +230,22 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              <Link
-                to="/login"
-                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Sign In
-              </Link>
+              <>
+                <Link
+                  to="/login"
+                  className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
             <Link 
               to="/cart"

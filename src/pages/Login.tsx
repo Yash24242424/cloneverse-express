@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
@@ -84,6 +84,11 @@ const Login = () => {
                 required
                 placeholder="••••••••"
               />
+              <div className="flex justify-end mt-1">
+                <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
             
             <div>
@@ -101,14 +106,22 @@ const Login = () => {
             
             <div className="text-center text-sm text-gray-600">
               <p>
-                Demo Accounts:
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-blue-600 hover:text-blue-800 underline">
+                  Sign Up
+                </Link>
               </p>
-              <p className="mt-1">
-                Admin: admin@gadgetflow.com / admin123
-              </p>
-              <p className="mt-1">
-                User: user@example.com / user123
-              </p>
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <p className="font-medium">
+                  Demo Accounts:
+                </p>
+                <p className="mt-1">
+                  Admin: admin@gadgetflow.com / admin123
+                </p>
+                <p className="mt-1">
+                  User: user@example.com / user123
+                </p>
+              </div>
             </div>
           </form>
         </div>
