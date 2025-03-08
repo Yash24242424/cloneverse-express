@@ -87,7 +87,6 @@ const ProductDetail = () => {
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Product Image */}
             <div className="rounded-2xl overflow-hidden border border-gray-100">
               <img 
                 src={product.image} 
@@ -96,7 +95,6 @@ const ProductDetail = () => {
               />
             </div>
             
-            {/* Product Details */}
             <div className="space-y-6">
               <div>
                 <div className="flex items-center space-x-2 mb-3">

@@ -4,6 +4,7 @@ import { Heart, Star, ShoppingCart } from "lucide-react";
 import { Product } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,7 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const { toast } = useToast();
+  const { addItem } = useCart();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -25,6 +27,7 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
   }, [index]);
 
   const handleAddToCart = () => {
+    addItem(product, 1);
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,
