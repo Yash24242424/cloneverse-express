@@ -10,7 +10,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const { 
     items, 
-    removeFromCart, 
+    removeItem, 
     updateQuantity, 
     subtotal, 
     tax, 
@@ -51,20 +51,20 @@ const Cart = () => {
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                   <div className="divide-y divide-gray-100">
                     {items.map((item) => (
-                      <div key={item.product.id} className="p-6 flex flex-col sm:flex-row gap-6">
+                      <div key={item.id} className="p-6 flex flex-col sm:flex-row gap-6">
                         <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                           <img 
-                            src={item.product.image}
-                            alt={item.product.name}
+                            src={item.image}
+                            alt={item.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
                         
                         <div className="flex-grow">
                           <h3 className="text-lg font-medium text-gray-900 mb-1">
-                            {item.product.name}
+                            {item.name}
                           </h3>
-                          <p className="text-sm text-gray-500 mb-4">Brand: {item.product.brand}</p>
+                          <p className="text-sm text-gray-500 mb-4">Brand: {item.brand || 'Unknown'}</p>
                           
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
@@ -72,7 +72,7 @@ const Cart = () => {
                                 variant="outline" 
                                 size="icon" 
                                 className="h-8 w-8"
-                                onClick={() => handleUpdateQuantity(item.product.id, item.quantity - 1)}
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                                 disabled={item.quantity <= 1}
                               >
                                 <Minus className="h-3 w-3" />
@@ -82,7 +82,7 @@ const Cart = () => {
                                 variant="outline" 
                                 size="icon" 
                                 className="h-8 w-8"
-                                onClick={() => handleUpdateQuantity(item.product.id, item.quantity + 1)}
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                               >
                                 <Plus className="h-3 w-3" />
                               </Button>
@@ -91,11 +91,11 @@ const Cart = () => {
                             <div className="flex items-center space-x-4">
                               <div className="text-right">
                                 <div className="text-lg font-bold text-gray-900">
-                                  ${formatPrice((item.product.salePrice || item.product.price) * item.quantity)}
+                                  ₹{formatPrice((item.salePrice || item.price) * item.quantity)}
                                 </div>
-                                {item.product.salePrice && (
+                                {item.salePrice && (
                                   <div className="text-sm text-gray-500 line-through">
-                                    ${formatPrice(item.product.price * item.quantity)}
+                                    ₹{formatPrice(item.price * item.quantity)}
                                   </div>
                                 )}
                               </div>
@@ -104,7 +104,7 @@ const Cart = () => {
                                 variant="ghost" 
                                 size="icon" 
                                 className="text-gray-400 hover:text-red-500"
-                                onClick={() => removeFromCart(item.product.id)}
+                                onClick={() => removeItem(item.id)}
                               >
                                 <Trash2 className="h-5 w-5" />
                               </Button>
@@ -124,21 +124,21 @@ const Cart = () => {
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal</span>
-                      <span className="font-medium">${formatPrice(subtotal)}</span>
+                      <span className="font-medium">₹{formatPrice(subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tax</span>
-                      <span className="font-medium">${formatPrice(tax)}</span>
+                      <span className="font-medium">₹{formatPrice(tax)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Shipping</span>
                       <span className="font-medium">
-                        {shipping > 0 ? `$${formatPrice(shipping)}` : 'Free'}
+                        {shipping > 0 ? `₹${formatPrice(shipping)}` : 'Free'}
                       </span>
                     </div>
                     <div className="border-t border-gray-100 pt-4 flex justify-between">
                       <span className="text-lg font-medium text-gray-900">Total</span>
-                      <span className="text-xl font-bold text-gray-900">${formatPrice(total)}</span>
+                      <span className="text-xl font-bold text-gray-900">₹{formatPrice(total)}</span>
                     </div>
                   </div>
                   

@@ -2,22 +2,30 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Define cart item type
-type CartItem = {
+export type CartItem = {
   id: string;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  brand?: string;
+  salePrice?: number;
 };
 
 type CartContextType = {
   items: CartItem[];
   totalItems: number;
   totalPrice: number;
-  addItem: (product: { id: string; name: string; price: number; image: string }, quantity?: number) => void;
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  addItem: (product: { id: string; name: string; price: number; image: string; brand?: string; salePrice?: number }, quantity?: number) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  addToCart: (product: any, quantity?: number) => void;
+  removeFromCart: (id: string) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -47,9 +55,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   
   // Calculate total price of all items in cart
-  const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const totalPrice = items.reduce((sum, item) => sum + (item.salePrice || item.price) * item.quantity, 0);
   
-  const addItem = (product: { id: string; name: string; price: number; image: string }, quantity = 1) => {
+  // Calculate subtotal (without tax and shipping)
+  const subtotal = totalPrice;
+  
+  // Calculate tax (e.g., 8% of subtotal)
+  const tax = subtotal * 0.08;
+  
+  // Calculate shipping (free for orders over ₹999)
+  const shipping = subtotal > 999 ? 0 : 99;
+  
+  // Calculate total (subtotal + tax + shipping)
+  const total = subtotal + tax + shipping;
+  
+  const addItem = (product: { id: string; name: string; price: number; image: string; brand?: string; salePrice?: number }, quantity = 1) => {
     setItems(prevItems => {
       // Check if item already exists in cart
       const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
@@ -68,16 +88,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             name: product.name,
             price: product.price,
             image: product.image,
-            quantity
+            quantity,
+            brand: product.brand,
+            salePrice: product.salePrice
           }
         ];
       }
     });
   };
   
+  // Alias for addItem for backwards compatibility
+  const addToCart = addItem;
+  
   const removeItem = (id: string) => {
     setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
+  
+  // Alias for removeItem for backwards compatibility
+  const removeFromCart = removeItem;
   
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
@@ -101,11 +129,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       value={{ 
         items, 
         totalItems, 
-        totalPrice, 
+        totalPrice,
+        subtotal,
+        tax,
+        shipping,
+        total,
         addItem, 
         removeItem, 
         updateQuantity, 
-        clearCart 
+        clearCart,
+        addToCart,
+        removeFromCart
       }}
     >
       {children}

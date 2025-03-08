@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { products } from '@/data/products';
@@ -58,6 +57,10 @@ const ProductDetail = () => {
   
   const handleAddToCart = () => {
     addToCart(product, quantity);
+    toast({
+      title: 'Added to cart',
+      description: `${quantity} ${quantity > 1 ? 'items' : 'item'} added to your cart.`,
+    });
   };
   
   const incrementQuantity = () => {
@@ -119,14 +122,14 @@ const ProductDetail = () => {
                 <div className="flex items-baseline space-x-2 mb-6">
                   {product.salePrice ? (
                     <>
-                      <span className="text-3xl font-bold text-gray-900">${product.salePrice}</span>
-                      <span className="text-xl text-gray-500 line-through">${product.price}</span>
+                      <span className="text-3xl font-bold text-gray-900">₹{product.salePrice}</span>
+                      <span className="text-xl text-gray-500 line-through">₹{product.price}</span>
                       <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">
-                        Save ${(product.price - product.salePrice).toFixed(2)}
+                        Save ₹{(product.price - product.salePrice).toFixed(2)}
                       </span>
                     </>
                   ) : (
-                    <span className="text-3xl font-bold text-gray-900">${product.price}</span>
+                    <span className="text-3xl font-bold text-gray-900">₹{product.price}</span>
                   )}
                 </div>
               </div>
@@ -176,7 +179,7 @@ const ProductDetail = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Free shipping on orders over $100
+                  Free shipping on orders over ₹999
                 </p>
                 <p className="text-gray-600 flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

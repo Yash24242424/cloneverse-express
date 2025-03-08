@@ -34,7 +34,7 @@ const INITIAL_FORM_STATE: FormState = {
   city: '',
   state: '',
   zipCode: '',
-  country: 'USA',
+  country: 'India',
   cardName: '',
   cardNumber: '',
   cardExpiry: '',
@@ -86,11 +86,11 @@ const Checkout = () => {
       try {
         // Create order items from cart items
         const orderItems: OrderItem[] = items.map(item => ({
-          productId: item.product.id,
-          productName: item.product.name,
-          price: item.product.salePrice || item.product.price,
+          productId: item.id,
+          productName: item.name,
+          price: item.salePrice || item.price,
           quantity: item.quantity,
-          total: (item.product.salePrice || item.product.price) * item.quantity,
+          total: (item.salePrice || item.price) * item.quantity,
         }));
         
         // Create the order
@@ -388,21 +388,21 @@ const Checkout = () => {
                 
                 <div className="max-h-80 overflow-y-auto mb-6">
                   {items.map((item) => (
-                    <div key={item.product.id} className="flex items-start py-4 border-b border-gray-100 last:border-0">
+                    <div key={item.id} className="flex items-start py-4 border-b border-gray-100 last:border-0">
                       <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0">
                         <img 
-                          src={item.product.image}
-                          alt={item.product.name}
+                          src={item.image}
+                          alt={item.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="ml-4 flex-grow">
-                        <h3 className="text-sm font-medium text-gray-900">{item.product.name}</h3>
+                        <h3 className="text-sm font-medium text-gray-900">{item.name}</h3>
                         <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                       </div>
                       <div className="ml-4 text-right">
                         <span className="text-sm font-medium text-gray-900">
-                          ${formatPrice((item.product.salePrice || item.product.price) * item.quantity)}
+                          ₹{formatPrice((item.salePrice || item.price) * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -412,21 +412,21 @@ const Checkout = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">${formatPrice(subtotal)}</span>
+                    <span className="font-medium">₹{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Tax</span>
-                    <span className="font-medium">${formatPrice(tax)}</span>
+                    <span className="font-medium">₹{formatPrice(tax)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Shipping</span>
                     <span className="font-medium">
-                      {shipping > 0 ? `$${formatPrice(shipping)}` : 'Free'}
+                      {shipping > 0 ? `₹${formatPrice(shipping)}` : 'Free'}
                     </span>
                   </div>
                   <div className="border-t border-gray-100 pt-3 flex justify-between">
                     <span className="text-lg font-medium text-gray-900">Total</span>
-                    <span className="text-xl font-bold text-gray-900">${formatPrice(total)}</span>
+                    <span className="text-xl font-bold text-gray-900">₹{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>

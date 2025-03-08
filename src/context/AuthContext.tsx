@@ -23,7 +23,7 @@ const MOCK_USERS = [
   {
     id: '1',
     name: 'Admin User',
-    email: 'admin@gadgetflow.com',
+    email: 'admin@99baazaar.com',
     password: 'admin123',
     role: 'admin' as const,
   },
@@ -48,7 +48,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Check if user is stored in local storage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Failed to parse user from localStorage:', error);
+        localStorage.removeItem('user');
+      }
     }
     setIsLoading(false);
   }, []);
