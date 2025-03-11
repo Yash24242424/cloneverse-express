@@ -2,100 +2,92 @@
 import { useState, useEffect } from 'react';
 import { 
   Search, 
+  Mail, 
+  User, 
   Shield, 
-  UserCheck, 
-  UserX,
-  Mail,
-  Phone,
-  Edit,
-  User,
-  Filter,
-  ChevronDown
+  MoreVertical,
+  UserPlus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
+type UserWithoutPassword = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+};
+
 const Users = () => {
-  const { getAllUsers, updateUserRole, isAdmin } = useAuth();
   const { toast } = useToast();
-  const [users, setUsers] = useState<ReturnType<typeof getAllUsers>>([]);
-  const [filteredUsers, setFilteredUsers] = useState<ReturnType<typeof getAllUsers>>([]);
+  const { getAllUsers, updateUserRole, isAdmin } = useAuth();
+  const [users, setUsers] = useState<UserWithoutPassword[]>([]);
+  const [displayedUsers, setDisplayedUsers] = useState<UserWithoutPassword[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
   
   useEffect(() => {
-    if (!isAdmin) return;
-    
-    // Simulate loading data
-    setTimeout(() => {
-      const allUsers = getAllUsers();
-      setUsers(allUsers);
-      setFilteredUsers(allUsers);
-      setIsLoading(false);
-    }, 800);
-  }, [getAllUsers, isAdmin]);
-  
-  useEffect(() => {
-    let filtered = [...users];
-    
-    // Apply role filter
-    if (roleFilter !== 'all') {
-      filtered = filtered.filter(user => user.role === roleFilter);
+    if (isAdmin) {
+      // Load users
+      setUsers(getAllUsers());
+      setDisplayedUsers(getAllUsers());
     }
-    
-    // Apply search filter
-    if (searchTerm.trim() !== '') {
+    setIsLoading(false);
+  }, [isAdmin, getAllUsers]);
+  
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setDisplayedUsers(users);
+    } else {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(user => 
+      const filtered = users.filter(user => 
         user.name.toLowerCase().includes(term) || 
         user.email.toLowerCase().includes(term)
       );
+      setDisplayedUsers(filtered);
     }
-    
-    setFilteredUsers(filtered);
-  }, [searchTerm, roleFilter, users]);
+  }, [searchTerm, users]);
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
   
-  const handleRoleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRoleFilter(e.target.value);
+  const handleAddUser = () => {
+    toast({
+      title: 'Add User',
+      description: 'User creation functionality would open a form here.',
+    });
   };
   
   const handleUpdateRole = async (userId: string, newRole: 'admin' | 'user') => {
-    try {
-      const success = await updateUserRole(userId, newRole);
+    const success = await updateUserRole(userId, newRole);
+    
+    if (success) {
+      setUsers(prev => prev.map(user => 
+        user.id === userId ? { ...user, role: newRole } : user
+      ));
       
-      if (success) {
-        // Update local state
-        setUsers(prev => 
-          prev.map(user => 
-            user.id === userId ? { ...user, role: newRole } : user
-          )
-        );
-        
-        toast({
-          title: 'Role Updated',
-          description: `User role has been updated to ${newRole}.`,
-        });
-      } else {
-        toast({
-          title: 'Update Failed',
-          description: 'Failed to update user role. Please try again.',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
+      toast({
+        title: 'Role Updated',
+        description: `User's role has been updated to ${newRole}.`,
+      });
+    } else {
       toast({
         title: 'Error',
-        description: 'An error occurred while updating the role.',
+        description: 'Failed to update user role.',
         variant: 'destructive',
       });
     }
+  };
+  
+  const handleSendPasswordReset = (email: string) => {
+    // In a real app, this would trigger a password reset email
+    toast({
+      title: 'Password Reset Email Sent',
+      description: `A password reset email has been sent to ${email}.`,
+    });
   };
   
   if (isLoading) {
@@ -106,20 +98,32 @@ const Users = () => {
     );
   }
   
+  if (!isAdmin) {
+    return (
+      <div className="p-8 text-center">
+        <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Restricted</h2>
+        <p className="text-gray-600">
+          You need administrator privileges to access this page.
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-        <Button>
-          <User className="mr-2 h-4 w-4" />
+        <Button onClick={handleAddUser}>
+          <UserPlus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
       
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        {/* Filters */}
-        <div className="p-5 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row gap-4">
-          <div className="relative flex-grow">
+        {/* Search */}
+        <div className="p-5 border-b border-gray-100 bg-gray-50">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               className="pl-9"
@@ -127,21 +131,6 @@ const Users = () => {
               value={searchTerm}
               onChange={handleSearch}
             />
-          </div>
-          
-          <div className="w-full md:w-64">
-            <div className="relative">
-              <select
-                className="w-full h-10 pl-3 pr-10 bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={roleFilter}
-                onChange={handleRoleFilterChange}
-              >
-                <option value="all">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
           </div>
         </div>
         
@@ -165,82 +154,78 @@ const Users = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
+              {displayedUsers.length > 0 ? (
+                displayedUsers.map((user) => (
                   <tr key={user.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-100 flex items-center justify-center">
-                          <span className="text-lg font-medium text-gray-600">
-                            {user.name.charAt(0)}
-                          </span>
+                          <User className="h-5 w-5 text-gray-500" />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
                             {user.name}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            ID: {user.id}
-                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                        <div className="text-sm text-gray-900">{user.email}</div>
+                      <div className="text-sm text-gray-900">
+                        {user.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        user.role === 'admin' 
-                          ? 'bg-purple-100 text-purple-800' 
-                          : 'bg-green-100 text-green-800'
+                        user.role === 'admin'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-blue-100 text-blue-800'
                       }`}>
                         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex space-x-2">
                         <Button
                           variant="ghost"
                           size="sm"
                           className="text-gray-600"
+                          onClick={() => handleSendPasswordReset(user.email)}
                         >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
+                          <Mail className="h-4 w-4 mr-1" />
+                          Reset Password
                         </Button>
                         
-                        {user.role === 'user' ? (
+                        <div className="relative group">
                           <Button
                             variant="ghost"
-                            size="sm"
-                            className="text-purple-600"
-                            onClick={() => handleUpdateRole(user.id, 'admin')}
+                            size="icon"
+                            className="text-gray-600"
                           >
-                            <Shield className="h-4 w-4 mr-1" />
-                            Make Admin
+                            <MoreVertical className="h-4 w-4" />
                           </Button>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-green-600"
-                            onClick={() => handleUpdateRole(user.id, 'user')}
-                          >
-                            <UserCheck className="h-4 w-4 mr-1" />
-                            Make User
-                          </Button>
-                        )}
-                        
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600"
-                        >
-                          <UserX className="h-4 w-4 mr-1" />
-                          Disable
-                        </Button>
+                          
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden group-hover:block">
+                            <div className="py-1">
+                              {user.role === 'user' ? (
+                                <button
+                                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  onClick={() => handleUpdateRole(user.id, 'admin')}
+                                >
+                                  <Shield className="h-4 w-4 mr-2" />
+                                  Make Admin
+                                </button>
+                              ) : (
+                                <button
+                                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  onClick={() => handleUpdateRole(user.id, 'user')}
+                                >
+                                  <User className="h-4 w-4 mr-2" />
+                                  Make Regular User
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
