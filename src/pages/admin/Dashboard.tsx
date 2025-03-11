@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ShoppingCart, 
   Package, 
@@ -47,7 +47,7 @@ const Dashboard = () => {
   const [revenueData] = useState(generateRevenueData());
   const [categoryData] = useState(generateCategoryData());
   
-  useState(() => {
+  useEffect(() => {
     // Simulate loading data
     setTimeout(() => {
       setOrders(getAllOrders());
