@@ -25,6 +25,7 @@ import AdminUsers from "./pages/admin/Users";
 import AdminReports from "./pages/admin/Reports";
 import AdminSettings from "./pages/admin/Settings";
 import AdminNotifications from "./pages/admin/Notifications";
+import WebsiteManager from "./pages/admin/WebsiteManager";
 import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -66,6 +67,7 @@ const App = () => (
                 <Route path="reports" element={<AdminReports />} />
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="notifications" element={<AdminNotifications />} />
+                <Route path="website-manager" element={<WebsiteManager />} />
               </Route>
               
               {/* Catch-all route */}

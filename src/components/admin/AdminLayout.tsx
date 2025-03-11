@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   FileText,
-  Bell
+  Bell,
+  Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -37,6 +38,7 @@ const AdminLayout = () => {
     { icon: <Users className="h-5 w-5" />, label: 'Users', path: '/admin/users' },
     { icon: <FileText className="h-5 w-5" />, label: 'Reports', path: '/admin/reports' },
     { icon: <Bell className="h-5 w-5" />, label: 'Notifications', path: '/admin/notifications' },
+    { icon: <Globe className="h-5 w-5" />, label: 'Website Manager', path: '/admin/website-manager' },
     { icon: <Settings className="h-5 w-5" />, label: 'Settings', path: '/admin/settings' },
   ];
   
