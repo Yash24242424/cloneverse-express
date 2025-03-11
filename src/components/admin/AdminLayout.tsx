@@ -9,7 +9,9 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  FileText,
+  Bell
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -32,6 +34,10 @@ const AdminLayout = () => {
     { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Dashboard', path: '/admin' },
     { icon: <Package className="h-5 w-5" />, label: 'Products', path: '/admin/products' },
     { icon: <ShoppingCart className="h-5 w-5" />, label: 'Orders', path: '/admin/orders' },
+    { icon: <Users className="h-5 w-5" />, label: 'Users', path: '/admin/users' },
+    { icon: <FileText className="h-5 w-5" />, label: 'Reports', path: '/admin/reports' },
+    { icon: <Bell className="h-5 w-5" />, label: 'Notifications', path: '/admin/notifications' },
+    { icon: <Settings className="h-5 w-5" />, label: 'Settings', path: '/admin/settings' },
   ];
   
   return (
@@ -57,7 +63,7 @@ const AdminLayout = () => {
       >
         <div className="h-full flex flex-col">
           <div className="p-4 border-b">
-            <h1 className="text-xl font-bold text-gray-900">GadgetFlow Admin</h1>
+            <h1 className="text-xl font-bold text-gray-900">99baazaar Admin</h1>
           </div>
           
           <div className="flex-grow overflow-y-auto">

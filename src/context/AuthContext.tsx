@@ -16,6 +16,8 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   signup: (name: string, email: string, password: string) => Promise<boolean>;
+  updateUserRole: (userId: string, role: 'admin' | 'user') => Promise<boolean>;
+  getAllUsers: () => User[];
 };
 
 // Mock users for demo
@@ -32,6 +34,27 @@ const MOCK_USERS = [
     name: 'Regular User',
     email: 'user@example.com',
     password: 'user123',
+    role: 'user' as const,
+  },
+  {
+    id: '3',
+    name: 'Sarah Johnson',
+    email: 'sarah@example.com',
+    password: 'sarah123',
+    role: 'user' as const,
+  },
+  {
+    id: '4',
+    name: 'Mike Williams',
+    email: 'mike@example.com',
+    password: 'mike123',
+    role: 'user' as const,
+  },
+  {
+    id: '5',
+    name: 'Karen Smith',
+    email: 'karen@example.com',
+    password: 'karen123',
     role: 'user' as const,
   },
 ];
@@ -115,9 +138,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
     return true;
   };
+
+  // Admin functions
+  const updateUserRole = async (userId: string, role: 'admin' | 'user'): Promise<boolean> => {
+    // Only admins can update roles
+    if (!isAdmin) return false;
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    const userIndex = MOCK_USERS.findIndex(u => u.id === userId);
+    if (userIndex === -1) return false;
+    
+    MOCK_USERS[userIndex].role = role;
+    
+    return true;
+  };
+  
+  const getAllUsers = (): User[] => {
+    if (!isAdmin) return [];
+    
+    return MOCK_USERS.map(({ password, ...user }) => user);
+  };
   
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAdmin, login, logout, signup }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isLoading, 
+      isAdmin, 
+      login, 
+      logout, 
+      signup, 
+      updateUserRole, 
+      getAllUsers 
+    }}>
       {children}
     </AuthContext.Provider>
   );
